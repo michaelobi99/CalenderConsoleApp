@@ -2,7 +2,15 @@
 #include <limits>
 #include <thread>
 #include <chrono>
+#include <random>
 #include "CalenderType.h"
+#if defined _WIN32
+#include <Windows.h>
+#define WIN32_LEAN_AND_MEAN
+#define VC_EXTRALEAN
+
+#endif
+
 using namespace std::chrono;
 void showMenu()
 {
@@ -15,7 +23,7 @@ void getInput(std::uint32_t& input)
     while (!(std::cin >> input))
     {
         std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.ignore(INT_MAX, '\n');
         std::cout << "******ERROR!! enter again: ";
     }
 }
@@ -42,7 +50,7 @@ void printCalendar(std::uint32_t year)
             while (!(std::cin >> year))
             {
                 std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cin.ignore(INT_MAX, '\n');
                 std::cout << "******ERROR!! Year: ";
             }
             error = true;
@@ -67,7 +75,7 @@ void printCalendar(std::uint32_t month, std::uint32_t year, CalendarType& calend
             while (!(std::cin >> year))
             {
                 std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cin.ignore(INT_MAX, '\n');
                 std::cout << "******ERROR!! Year: ";
             }
         }
@@ -78,7 +86,7 @@ void printCalendar(std::uint32_t month, std::uint32_t year, CalendarType& calend
             while (!(std::cin >> month))
             {
                 std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cin.ignore(INT_MAX, '\n');
                 std::cout << "******ERROR!! Month: ";
             }
         }
@@ -114,9 +122,13 @@ void processInput(std::uint32_t input)
 
 int main()
 {
+    auto mt = std::mt19937(std::random_device{}());
+    auto dist = std::uniform_int_distribution<std::uint32_t>{ 2, 7 };
+    const HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     auto still{ true };
     while (still)
     {
+        SetConsoleTextAttribute(handle, dist(mt));
         showMenu();
         auto input{ 0 };
         auto error{ true };
@@ -125,7 +137,7 @@ int main()
             while (!(std::cin >> input))
             {
                 std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cin.ignore(INT_MAX, '\n');
                 std::cout << "Error!,enter again: ";
             }
             if (input < 1 || input > 2)
@@ -145,7 +157,7 @@ int main()
             if (!(std::cin >> ch))
             {
                 std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cin.ignore(INT_MAX, '\n');
                 std::cout << "invalid input! Enter again: ";
                 continue;
             }
@@ -157,4 +169,3 @@ int main()
     std::this_thread::sleep_for(2s);
     return 0;
 }
-
